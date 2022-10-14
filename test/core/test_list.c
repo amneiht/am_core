@@ -6,7 +6,7 @@
  */
 // test list
 #include <acore.h>
-#include <acore/acore_list.h>
+#include <acore/list.h>
 typedef struct plist {
 	ACORE_DECL_LIST_ELEMENT(struct plist)
 	;
@@ -16,15 +16,11 @@ void list_clear(void *data) {
 	plist *pp = (plist*) data;
 	PJ_LOG(1, (ACORE_NAME,"clear data for list id : %d",pp->id));
 }
-static pj_int32_t element_cmp(acore_list_element *ele1,
-		acore_list_element *ele2) {
-	plist *p1 = ele1;
-	plist *p2 = ele2;
-	if (p1->priority == p2->priority)
-		return 0;
-	if (p1->priority > p2->priority)
-		return 1;
-	return -1;
+static pj_int32_t element_cmp(const acore_list_element *ele1,
+		const acore_list_element *ele2) {
+	const plist *p1 = ele1;
+	const plist *p2 = ele2;
+	return p1->priority - p2->id;
 }
 pj_int32_t invert_element_cmp(acore_list_element *ele1,
 		acore_list_element *ele2) {
@@ -45,10 +41,10 @@ plist* new_list_ele(pj_pool_t *pool, int prioty) {
 	ld->user_data = ld;
 	return ld;
 }
-static pj_bool_t print_id(void *list, void *arg) {
+static pj_status_t print_id(void *data, const acore_list_element *list) {
 	plist *pp = (plist*) list;
 	PJ_LOG(1, (ACORE_NAME,"print id is:%d",pp->id));
-	return PJ_FALSE;
+	return acore_ele_notfound;
 }
 int main(int argc, char **argv) {
 	acore_init();
@@ -72,12 +68,15 @@ int main(int argc, char **argv) {
 	// sort list
 	puts("\n\ntest_list with sort");
 	list = acore_list_create(pool, element_cmp);
-	for (int i = 1; i < 11; i++) {
-		plist *tmp = new_list_ele(pool, 30 - i);
+	for (int i = 1; i < 100; i++) {
+		plist *tmp = new_list_ele(pool, pj_rand() % 30 + 10);
 		acore_list_add(list, tmp);
 	}
+	plist *ta = new_list_ele(pool, 9);
+	acore_list_add(list, ta);
 	acore_list_search(list, print_id, NULL);
 	puts("ss");
+	plist *ts = acore_list_element_at(list, 98);
 	acore_pool_release(pool);
 	acore_close();
 	return 0;

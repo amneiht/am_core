@@ -12,22 +12,17 @@
 	extern "C" {
 #endif
 
-#include <acore_conf.h>
+#include <config.h>
 
-#include <acore/acore_base.h>
-#include <acore/acore_event.h>
-#include <acore/acore_handle.h>
-#include <acore/acore_timer.h>
-#include <acore/acore_job.h>
+#include <acore/base.h>
+#include <acore/event.h>
+#include <acore/timer.h>
+#include <acore/conf.h>
+#include <acore/list.h>
+#include <acore/work.h>
 
-#include <acore/acore_ui.h>
-
-
-
-#include <string.h>
-#define ACORE_NAME (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)  // file name
-#define ACORE_LINE   __LINE__  // line in name
-#define ACORE_FUNC	 __func__  // funtion name_
+#include <acore/ui.h>
+#include <acore/runtime.h>
 
 #ifdef __cplusplus
 	}
