@@ -8,12 +8,8 @@
 #ifndef ACORE_LIST_H_
 #define ACORE_LIST_H_
 
-#include <config.h>
 #include <pjlib.h>
 #include <acore/base.h>
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #define ACORE_DECL_LIST_ELEMENT(type) PJ_DECL_LIST_MEMBER(type); \
 pj_uint32_t id; \
@@ -31,7 +27,7 @@ typedef void acore_list_element;
  *			1 ele1 > ele1
  *			-1  ele1 < ele2
  */
-typedef pj_int32_t acore_list_element_cmp(const acore_list_element *ele1,
+typedef pj_int32_t (*acore_list_element_cmp)(const acore_list_element *ele1,
 		const acore_list_element *ele2);
 
 acore_list_t* acore_list_create(pj_pool_t *pool, acore_list_element_cmp cmp);
@@ -55,9 +51,5 @@ acore_list_element* acore_list_search(acore_list_t *list,
 
 void acore_list_clear(acore_list_t *list);
 void acore_list_destroy(acore_list_t *list);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* ACORE_LIST_H_ */

@@ -63,7 +63,7 @@ acore_timer_c* acore_timer_control_create(pj_pool_t *pool, pj_int32_t ms) {
 	heap->delay = ms;
 	heap->time_change = pj_lock_create_simple_mutex(pool, "heap_lock",
 			&heap->lock);
-	pj_timer_heap_create(pool, acore_config()->timer_limit_callback, &heap->ht);
+	pj_timer_heap_create(pool, 32, &heap->ht);
 	pj_timer_heap_set_lock(heap->ht, heap->lock, PJ_TRUE);
 	return heap;
 

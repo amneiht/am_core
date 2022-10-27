@@ -8,9 +8,7 @@
 #ifndef ACORE_CONF_H_
 #define ACORE_CONF_H_
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
+#if 0
 
 #include <pjlib.h>
 #include <pjlib-util.h>
@@ -37,8 +35,5 @@ void acore_conf_list2(acore_conf_t *conf, const char *name,
 
 void acore_conf_print(acore_conf_t *conf);
 
-#ifdef __cplusplus
-	}
 #endif
-
 #endif /* ACORE_CONF_H_ */

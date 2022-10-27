@@ -8,6 +8,9 @@
 #include <acore.h>
 
 static pj_rbtree mtree;
+struct core_api {
+	pj_rbtree_node *link;
+};
 static int api_comp(const void *key1, const void *key2) {
 	const pj_str_t *k1 = key1;
 	const pj_str_t *k2 = key2;
@@ -20,7 +23,15 @@ struct m_api {
 	void *api_p;
 	void (*clear)(void *api);
 };
-void acore_runtime_register_api(pj_pool_t *pool, const char *name, void *api,
+
+static void clear_api(void *data) {
+	struct m_api *mapi = data;
+	struct core_api *core = mapi->api_p;
+	pj_rbtree_erase(&mtree, core->link);
+	if (mapi->clear)
+		mapi->clear(mapi->api_p);
+}
+void* acore_runtime_register_api(pj_pool_t *pool, const char *name, void *api,
 		void (*clear)(void *api)) {
 	pj_rbtree_node *node = PJ_POOL_ALLOC_T(pool, pj_rbtree_node);
 	struct m_api *api_t = PJ_POOL_ALLOC_T(pool, struct m_api);
@@ -31,24 +42,31 @@ void acore_runtime_register_api(pj_pool_t *pool, const char *name, void *api,
 	node->key = key;
 	node->user_data = api_t;
 	pj_rbtree_insert(&mtree, node);
+	acore_mem_bind(pool, api_t, clear_api);
+	struct core_api *core = api;
+	core->link = node;
+	return api_t;
 }
-void acore_runtime_unregister_api(const char *name) {
-	pj_str_t sname = pj_str((char*) name);
-	pj_rbtree_node *node = pj_rbtree_find(&mtree, &sname);
-	if (node == NULL)
-		return;
-	acore_event_send(acore_main_event_id(), ACORE_MODULE_CLOSE, (void*) name);
-	pj_rbtree_erase(&mtree, node);
-	struct m_api *l = node->user_data;
-	if (l->clear)
-		l->clear(l->api_p);
+void acore_runtime_unregister_api(void *api) {
+	acore_mem_mask_destroy(api);
 }
-
-void* acore_runtime_get_api(const char *name) {
+const void* acore_runtime_get_clone(const char *name) {
 	pj_str_t sname = pj_str((char*) name);
 	pj_rbtree_node *node = pj_rbtree_find(&mtree, &sname);
 	if (node == NULL)
 		return NULL;
 	struct m_api *l = node->user_data;
-	return l->api_p;
+	if (acore_mem_is_available(l)) {
+		acore_mem_add_ref(l);
+		return l->api_p;
+	}
+	return NULL;
+}
+void acore_runtime_release_clone(const void *clone) {
+	struct core_api *core = (void*) clone;
+	acore_mem_dec_ref(core->link->user_data);
+}
+pj_bool_t acore_runtime_check(const void *clone) {
+	struct core_api *core = (void*) clone;
+	return acore_mem_is_available(core->link->user_data);
 }

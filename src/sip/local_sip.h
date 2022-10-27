@@ -10,11 +10,12 @@
 
 #include <asip/call.h>
 #include <asip/sip_base.h>
+#include <acore/context.h>
 #include "../core/local_core.h"
 /// begin lock
-#define BEGIN  asip_start();
+#define BEGIN  asip_start(); {
 /// end lock
-#define END  asip_end();
+#define END  }asip_end();
 
 #define asip_strcpy(a,b) a->ptr = alloca(b->slen+1) ; \
 pj_memcpy(a->ptr , b->ptr , b->slen ); \
@@ -115,17 +116,12 @@ struct call_module {
 	pj_bool_t (*match_media)(const pj_str_t *media);
 	pj_bool_t (*match_sdp)(const pjmedia_sdp_session *sdp);
 	acore_event_handle_t *evt;
-	int counter;
-	struct {
-		acore_callback_clear clear;
-		void *user_data;
-	} mod;
 	pj_bool_t is_close;
 };
 
 ACORE_LOCAL void _asip_call_module_init(pj_pool_t *pool);
 ACORE_LOCAL void _asip_call_module_close();
 ACORE_LOCAL acore_list_t* _asip_call_module_list();
-ACORE_LOCAL acore_list_t* _asip_call_inv_bind_list();
+ACORE_LOCAL acore_mmap_t* _asip_call_inv_map();
 ACORE_LOCAL void _asip_inv_module(pjsip_endpoint *ep);
 #endif /* SIP_LOCAL_SIP_H_ */

@@ -8,7 +8,6 @@
 #ifndef ACORE_EVENT_H_
 #define ACORE_EVENT_H_
 
-#include <config.h>
 #include <acore/base.h>
 #include <pjlib.h>
 

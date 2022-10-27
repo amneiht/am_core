@@ -41,6 +41,7 @@ static void ui_clear(void *user_data) {
 	acore_list_destroy(lps->func_list);
 	pj_lock_release(lps->lock);
 	acore_pool_release(lps->pool);
+
 }
 static ui_element* create_ui() {
 	pj_pool_t *pool = acore_pool_create(NULL, 2048, 2048);

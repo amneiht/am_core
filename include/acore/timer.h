@@ -8,7 +8,6 @@
 #ifndef ACORE_TIMER_H_
 #define ACORE_TIMER_H_
 
-#include <config.h>
 #include <pjlib.h>
 
 typedef struct acore_timer_controler acore_timer_c; // timer controller

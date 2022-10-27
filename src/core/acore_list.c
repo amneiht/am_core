@@ -19,9 +19,9 @@ acore_list_t* acore_list_create(pj_pool_t *pool, acore_list_element_cmp cmp) {
 	pj_list_init(&list->array);
 	return list;
 }
-void acore_list_set_sort_rule(acore_list_t *list, acore_list_element_cmp *cmp) {
-	list->cmp = cmp;
-}
+//void acore_list_set_sort_rule(acore_list_t *list, acore_list_element_cmp cmp) {
+//	list->cmp = cmp;
+//}
 
 int acore_list_size(acore_list_t *list) {
 	return pj_list_size(&list->array);

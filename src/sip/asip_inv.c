@@ -104,33 +104,33 @@ static pj_bool_t cb_on_invite(pjsip_rx_data *rdata) {
 	inc->rdata = rdata;
 	inc->sdp = sdp;
 	BEGIN
-	inv_bind *inb = pj_pool_alloc(inv->pool, sizeof(inv_bind));
-	// create get media
-	call_module *callm = acore_list_search(_asip_call_module_list(), match_sdp,
-			sdp);
-	if (callm == NULL) {
-		pj_str_t respone = pj_str("No Support media");
-		pjsip_tx_data *tdata;
-		if (inv != NULL) {
-			pjsip_inv_end_session(inv, 400, &respone, &tdata);
-			pjsip_inv_send_msg(inv, tdata);
-		}
-	} else {
-		acall = pj_pool_alloc(inv->pool, sizeof(asip_call));
-		pj_strdup(inv->pool, &acall->caller, &inc->caller);
-		acall->callee = ua->login.cred.username;
-		acall->mod = callm;
-		acall->state = app_call_state_wait;
-		acall->ua = ua;
-		acall->user_data = inb;
-		inb->call = acall;
-		inb->inv = inv;
-		acore_list_add(_asip_call_inv_bind_list(), inb);
-		pj_list_insert_after(&ua->call, acall);
-		// callback for call module
-		callm->on_call_incoming(acall, sdp, callm->mod.user_data);
-	}
-	END
+		inv_bind *inb = pj_pool_alloc(inv->pool, sizeof(inv_bind));
+		// create get media
+		call_module *callm = acore_list_search(_asip_call_module_list(),
+				match_sdp, sdp);
+		if (!acore_mem_is_available(callm)) {
+			pj_str_t respone = pj_str("No Support media");
+			pjsip_tx_data *tdata;
+			if (inv != NULL) {
+				pjsip_inv_end_session(inv, 400, &respone, &tdata);
+				pjsip_inv_send_msg(inv, tdata);
+			}
+		} else {
+			acall = pj_pool_alloc(inv->pool, sizeof(asip_call));
+			pj_strdup(inv->pool, &acall->caller, &inc->caller);
+			acall->callee = ua->login.cred.username;
+			acall->mod = callm;
+			acall->state = app_call_state_wait;
+			acall->ua = ua;
+			acall->user_data = inb;
+			inb->call = acall;
+			inb->inv = inv;
+			acore_mmap_set(inv->pool, _asip_call_inv_map(), inv, acall);
+			pj_list_insert_after(&ua->call, acall);
+			// callback for call module
+			callm->on_call_incoming(acall, sdp, callm->user_data);
+			acore_mem_add_ref(callm);
+		}END
 	if (acall) {
 		acore_event_send(asip_event_id(), ASIP_EVENT_INV_STATE_INCOMING, acall);
 	}
@@ -145,10 +145,11 @@ static void call_on_media_update(pjsip_inv_session *inv, pj_status_t status) {
 		return;
 	}
 	BEGIN
-	if (call->state < app_call_state_handle) {
-		acore_event_send(asip_event_id(), ASIP_EVENT_INV_STATE_MEDIA, call);
-		call->state = app_call_state_incall;
-	}
+		if (call->state < app_call_state_handle) {
+			acore_event_send(asip_event_id(), ASIP_EVENT_INV_STATE_MEDIA, call);
+			call->state = app_call_state_incall;
+		}
+		// end state change
 	END
 }
 
@@ -167,7 +168,8 @@ static void call_on_state_changed(pjsip_inv_session *inv, pjsip_event *e) {
 		acore_event_send(asip_event_id(), ASIP_EVENT_INV_STATE_DISCONNECTED,
 				call);
 		BEGIN
-		acore_list_remove(_asip_call_inv_bind_list(), call->user_data);
+//			acore_list_remove(_asip_call_inv_bind_list(), call->user_data);
+			acore_mem_dec_ref(call);
 		END
 	}
 }
@@ -197,17 +199,8 @@ ACORE_LOCAL void _asip_inv_module(pjsip_endpoint *ep) {
 		PJ_LOG(1, (ACORE_FUNC, "loi set sup inv call back\n"));
 	}
 }
-static int inv_search(void *value, const void *node) {
-
-	pjsip_inv_session *inv = value;
-	const inv_bind *inb = node;
-	if (inb->inv == inv)
-		return acore_ele_found;
-	return acore_ele_notfound;
-}
 asip_call* asip_call_find_by_inv(pjsip_inv_session *inv) {
-	return (asip_call*) acore_list_search(_asip_call_inv_bind_list(),
-			inv_search, inv);
+	return acore_mmap_get(_asip_call_inv_map(), inv);
 }
 pj_pool_t* asip_call_get_pool(asip_call *call) {
 	return call->inv->pool;

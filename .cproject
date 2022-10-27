@@ -32,8 +32,9 @@
 									<listOptionValue builtIn="false" value="/usr/local/include"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.1678864601" name="Other flags" superClass="gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-c -fmessage-length=0" valueType="string"/>
-								<option id="gnu.c.compiler.option.debugging.sanitaddress.2099163850" name="Sanitize address (-fsanitize=address)" superClass="gnu.c.compiler.option.debugging.sanitaddress" useByScannerDiscovery="false" value="false" valueType="boolean"/>
-								<option id="gnu.c.compiler.option.debugging.sanitleak.1445035280" name="Sanitize memory leak (-fsanitize=leak)" superClass="gnu.c.compiler.option.debugging.sanitleak" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.debugging.sanitaddress.2099163850" name="Sanitize address (-fsanitize=address)" superClass="gnu.c.compiler.option.debugging.sanitaddress" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.debugging.sanitleak.1445035280" name="Sanitize memory leak (-fsanitize=leak)" superClass="gnu.c.compiler.option.debugging.sanitleak" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.debugging.sanitthread.2011928700" superClass="gnu.c.compiler.option.debugging.sanitthread" useByScannerDiscovery="false" value="false" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.534464424" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1585973295" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug">
@@ -41,44 +42,45 @@
 									<listOptionValue builtIn="false" value="/usr/local/lib"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.link.option.libs.1235127682" name="Libraries (-l)" superClass="gnu.c.link.option.libs" useByScannerDiscovery="false" valueType="libs">
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pjsua2-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="stdc++"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pjsua-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pjsip-ua-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pjsip-simple-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pjsip-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pjmedia-codec-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pjmedia-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pjmedia-videodev-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pjmedia-audiodev-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pjnath-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pjlib-util-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="srtp-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="resample-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="gsmcodec-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="speex-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ilbccodec-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="g7221codec-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="yuv-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="webrtc-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pj-x86_64-unknown-linux-gnu"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ssl"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="crypto"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="vpx"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="uuid"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="m"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="rt"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pthread"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="asound"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="SDL2"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="avdevice"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="avformat"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="avcodec"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="swscale"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="avutil"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="v4l2"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ncursesw"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="tinfo"/>
+									<listOptionValue builtIn="false" value="pjsua2-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="asan"/>
+									<listOptionValue builtIn="false" value="stdc++"/>
+									<listOptionValue builtIn="false" value="pjsua-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="pjsip-ua-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="pjsip-simple-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="pjsip-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="pjmedia-codec-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="pjmedia-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="pjmedia-videodev-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="pjmedia-audiodev-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="pjnath-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="pjlib-util-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="srtp-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="resample-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="gsmcodec-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="speex-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="ilbccodec-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="g7221codec-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="yuv-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="webrtc-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="pj-x86_64-unknown-linux-gnu"/>
+									<listOptionValue builtIn="false" value="ssl"/>
+									<listOptionValue builtIn="false" value="crypto"/>
+									<listOptionValue builtIn="false" value="vpx"/>
+									<listOptionValue builtIn="false" value="uuid"/>
+									<listOptionValue builtIn="false" value="m"/>
+									<listOptionValue builtIn="false" value="rt"/>
+									<listOptionValue builtIn="false" value="pthread"/>
+									<listOptionValue builtIn="false" value="asound"/>
+									<listOptionValue builtIn="false" value="SDL2"/>
+									<listOptionValue builtIn="false" value="avdevice"/>
+									<listOptionValue builtIn="false" value="avformat"/>
+									<listOptionValue builtIn="false" value="avcodec"/>
+									<listOptionValue builtIn="false" value="swscale"/>
+									<listOptionValue builtIn="false" value="avutil"/>
+									<listOptionValue builtIn="false" value="v4l2"/>
+									<listOptionValue builtIn="false" value="ncursesw"/>
+									<listOptionValue builtIn="false" value="tinfo"/>
 									<listOptionValue builtIn="false" value="pjsua2-x86_64-unknown-linux-gnu"/>
 									<listOptionValue builtIn="false" value="stdc++"/>
 									<listOptionValue builtIn="false" value="pjsua-x86_64-unknown-linux-gnu"/>

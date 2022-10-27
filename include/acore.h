@@ -12,14 +12,14 @@
 	extern "C" {
 #endif
 
-#include <config.h>
-
 #include <acore/base.h>
 #include <acore/event.h>
 #include <acore/timer.h>
 #include <acore/conf.h>
 #include <acore/list.h>
+#include <acore/mem.h>
 #include <acore/work.h>
+#include <acore/context.h>
 
 #include <acore/ui.h>
 #include <acore/runtime.h>

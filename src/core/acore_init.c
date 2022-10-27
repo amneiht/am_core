@@ -9,7 +9,7 @@
 #include "local_core.h"
 #include <pjlib-util.h>
 
-pj_caching_pool acore_cp;
+static pj_caching_pool acore_cp;
 static pj_bool_t core_init = PJ_FALSE;
 static acore_main *core;
 
@@ -27,7 +27,7 @@ pj_status_t acore_init(void) {
 	//init memory pool
 
 	pj_caching_pool_init(&acore_cp, &pj_pool_factory_default_policy, 102400);
-	pj_pool_t *pool = pj_pool_create(&acore_cp.factory, "acore", 4096, 4096,
+	pj_pool_t *pool = pj_pool_create(&acore_cp.factory, "acore", 10240, 10240,
 	NULL);
 
 	core = pj_pool_alloc(pool, sizeof(acore_main));
@@ -46,7 +46,10 @@ pj_status_t acore_init(void) {
 	core->time_c = acore_timer_control_create(core->core_pool, 1000);
 	// woker
 	_acore_work_init(pool);
-
+	//init pasre
+	_acore_context_init(pool);
+	// mem
+	_acore_mem_init(pool);
 	return PJ_SUCCESS;
 }
 
@@ -58,6 +61,7 @@ pj_status_t acore_close() {
 		_acore_event_release();
 		_acore_ui_close();
 		_acore_work_close();
+		_acore_mem_close();
 		acore_timer_control_destroy(core->time_c);
 		pj_lock_destroy(core->lock);
 		pj_pool_release(core->core_pool);
