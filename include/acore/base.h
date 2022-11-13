@@ -27,7 +27,15 @@ typedef void (*acore_callback_clear)(void *user_data);
 #define acore_size_algin(size) ( size  + size % 1024 )
 
 #include <string.h>
-#define ACORE_NAME (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)  // file name
+
+// path separate
+#ifdef _WIN32
+#define ACORE_PATH_SP '\\'
+#else
+#define ACORE_PATH_SP '/'
+#endif
+
+#define ACORE_NAME (strrchr(__FILE__, ACORE_PATH_SP) ? strrchr(__FILE__, ACORE_PATH_SP) + 1 : __FILE__)  // file name
 #define ACORE_LINE   __LINE__  // line in name
 #define ACORE_FUNC	 __func__  // funtion name_
 

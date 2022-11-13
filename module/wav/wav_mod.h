@@ -14,8 +14,10 @@
 #define wav_api_name "wav"
 typedef struct wav_function {
 	ACORE_RUNTIME_DECL;
-	pjmedia_port* (*create_playback)(pj_pool_t *pool, const char *name);
-	pjmedia_port* (*create_record)(pj_pool_t *pool,
+	// get data freom file
+	pjmedia_port* (*input_port)(pj_pool_t *pool, const char *name);
+	//out put data to wav file
+	pjmedia_port* (*output_port)(pj_pool_t *pool,
 			const pjmedia_audio_format_detail *inf, const char *name,
 			enum pjmedia_file_writer_option opt);
 	void (*clear_port)(pjmedia_port*);

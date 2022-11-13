@@ -24,10 +24,16 @@ typedef struct media_sys {
 	acore_list_t *aud;
 	// for future
 	acore_list_t *vid;
-
+	pjmedia_event_mgr *mgr;
 } media_sys;
 
-static media_sys *msys;
+static media_sys *msys = NULL;
+
+acore_conf_t* acore_media_default_conf() {
+	if (msys)
+		return msys->conf;
+	return NULL;
+}
 static void media_destroy(void *data) {
 	media_sys *media = (media_sys*) data;
 	pj_lock_destroy(media->lock);
@@ -41,15 +47,27 @@ static void seting_codec(void *data, const pj_str_t *value) {
 		pjmedia_codec_g711_init(mep);
 		PJ_LOG(3, ("media" , "G711 codec init"));
 #endif
+	} else if (pj_strcmp2(value, "g721") == 0) {
+#if defined (PJMEDIA_HAS_G7221_CODEC) && PJMEDIA_HAS_G7221_CODEC
+		pjmedia_codec_g7221_init(mep);
+		PJ_LOG(3, ("media" , "G721 codec init"));
+#else
+		PJ_LOG(3, ("media" , "G721 is not suppport"));
+#endif
 	} else if (pj_strcmp2(value, "g729") == 0) {
 #if defined (PJMEDIA_HAS_BCG729) && PJMEDIA_HAS_BCG729 !=0
 	pjmedia_codec_bcg729_init(mep);
 	PJ_LOG(3, (this , "BCG729 codec init"));
+
+#else
+		PJ_LOG(3, ("media" , "G729 is not suppport"));
 #endif
 	} else if (pj_strcmp2(value, "speex") == 0) {
 #if  defined (PJMEDIA_HAS_SPEEX_CODEC) && PJMEDIA_HAS_SPEEX_CODEC !=0
 		pjmedia_codec_speex_init_default(mep);
 		PJ_LOG(3, (this , "Speex codec init"));
+#else
+		PJ_LOG(3, ("media" , "speex is not suppport"));
 #endif
 	} else if (pj_strcmp2(value, "l16") == 0) {
 //PJMEDIA_HAS_ILBC_CODEC
@@ -82,7 +100,7 @@ pj_status_t acore_media_init(acore_conf_t *conf) {
 		return status;
 	// create endpoint
 	pjmedia_endpt *mep;
-	status = pjmedia_endpt_create2(acore_pool_factory(), NULL, 1, &mep);
+	status = pjmedia_endpt_create2(acore_pool_factory(), NULL, 0, &mep);
 	if (status != PJ_SUCCESS)
 		return status;
 	// create sys
@@ -96,6 +114,9 @@ pj_status_t acore_media_init(acore_conf_t *conf) {
 	//	media_list
 	msys->aud = acore_list_create(pool, NULL);
 	msys->vid = acore_list_create(pool, NULL);
+
+	// create even manager wiht thread allow
+	pjmedia_event_mgr_create(pool, 0, &msys->mgr);
 
 	pj_lock_create_recursive_mutex(pool, "media_lock", &msys->lock);
 	acore_context_t *ctx = acore_conf_find_context2(conf, "core");
@@ -149,13 +170,14 @@ void acore_media_audio_unregister_factory(acore_audio_factory_t *fac) {
 
 static int find_by_name(void *value, const void *list) {
 	const acore_audio_factory_t *fac = list;
-	if (pj_strcmp2(fac->name, value) == 0) {
+	if (pj_strcmp(fac->name, value) == 0) {
 		return acore_ele_found;
 	}
 	return acore_ele_notfound;
 }
-pjmedia_port* acore_media_audio_create(pj_pool_t *pool, const char *name,
-		const pjmedia_dir dir, const pjmedia_audio_format_detail *aud) {
+pjmedia_port* acore_media_audio_create(pj_pool_t *pool, const pj_str_t *name,
+		const pjmedia_dir dir, const pjmedia_audio_format_detail *aud,
+		acore_media_fail_callback fail, void *callback_data) {
 	pjmedia_port *res = NULL;
 	if (!acore_mem_is_available(msys))
 		return NULL;
@@ -164,7 +186,8 @@ pjmedia_port* acore_media_audio_create(pj_pool_t *pool, const char *name,
 			(void*) name);
 	if (!fac || !acore_mem_is_available(fac))
 		return NULL;
-	res = fac->create(pool, dir, aud, msys->conf, fac->user_data);
+	res = fac->create(pool, dir, aud, msys->conf, fail, callback_data,
+			fac->user_data);
 	if (res) {
 		acore_mmap_set(pool, msys->map, res, fac);
 		acore_mem_add_ref(fac);

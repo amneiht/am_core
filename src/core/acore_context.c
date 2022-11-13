@@ -24,15 +24,19 @@ struct acore_context_t {
 struct acore_conf_t {
 	pj_pool_t *pool;
 	pj_rbtree *tree;
+	pj_str_t path;
 	struct {
 		PJ_DECL_LIST_MEMBER(acore_context_t)
 		;
 	} list;
+
 };
 static pj_cis_t *cis_value;
 static pj_cis_t *cis_cmt;
 static pj_cis_t *cis_context;
 static char *conf_path;
+
+static void conf_clear(void *data);
 const char* acore_conf_get_path() {
 	return conf_path;
 }
@@ -196,6 +200,24 @@ static void add_ele(pj_pool_t *pool, acore_context_t *ctx, pj_str_t *name,
 		pj_json_elem_add(find, ele);
 	}
 }
+static pj_status_t parrent_dir(const char *file, pj_str_t *path) {
+	if (file == NULL)
+		return -1;
+	char sp = ACORE_PATH_SP;
+	int i;
+	int size = strlen(file);
+	for (i = size - 1; i > -1; i--) {
+		if (file[i] == sp)
+			break;
+	}
+	if (i < 0) {
+		path->slen = sprintf(path->ptr, ".");
+		return 0;
+	}
+	i--;
+	path->slen = sprintf(path->ptr, "%.*s", i, file);
+	return 0;
+}
 acore_conf_t* acore_conf_parse(const char *file) {
 	FILE *fp = fopen(file, "r");
 	if (!fp) {
@@ -207,10 +229,11 @@ acore_conf_t* acore_conf_parse(const char *file) {
 	char buff[sl + 1];
 	buff[sl] = 0;
 	fread(buff, sizeof(char), sl, fp);
-	fclose(fp);
 
 	acore_conf_t *conf = acore_conf_prase2(buff, sl);
-	pj_bzero(buff, sl);
+	conf->path.ptr = pj_pool_alloc(conf->pool, 500);
+	parrent_dir(file, &conf->path);
+	fclose(fp);
 	return conf;
 }
 acore_conf_t* acore_conf_prase2(char *buffer, long len) {
@@ -266,10 +289,15 @@ acore_conf_t* acore_conf_prase2(char *buffer, long len) {
 		add_ele(conf->pool, current, name, value);
 	}
 	pj_scan_fini(scanner);
+	acore_mem_bind(pool, conf, conf_clear);
 	return conf;
 }
-void acore_conf_release(acore_conf_t *conf) {
+static void conf_clear(void *data) {
+	acore_conf_t *conf = data;
 	acore_pool_release(conf->pool);
+}
+void acore_conf_release(acore_conf_t *conf) {
+	acore_mem_mask_destroy(conf);
 }
 void node_print(void *node, void *user_data) {
 	(void) user_data;

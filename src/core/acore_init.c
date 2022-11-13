@@ -18,7 +18,7 @@ pj_status_t acore_init(void) {
 		return core_init;
 	core_init = PJ_TRUE;
 	pj_status_t init = pj_init();
-	pj_log_set_level(3);
+	pj_log_set_level(5);
 	if (init != PJ_SUCCESS)
 		return init;
 	init = pjlib_util_init();
